@@ -508,7 +508,9 @@ h6,
   color: var(--hawker-ink);
   text-decoration: none;
   height: 100%;
-  transition: transform 180ms ease, box-shadow 180ms ease;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .dashboard-action-card:hover {
@@ -536,7 +538,9 @@ h6,
   box-shadow: 0 30px 60px rgba(15, 27, 46, 0.08);
   display: flex;
   flex-direction: column;
-  transition: transform 240ms ease, box-shadow 240ms ease;
+  transition:
+    transform 240ms ease,
+    box-shadow 240ms ease;
   position: sticky;
   top: 0;
   align-self: stretch;
@@ -681,7 +685,6 @@ h6,
     background: rgba(15, 27, 46, 0.4);
   }
 }
-
 
 .notification-list {
   display: grid;
