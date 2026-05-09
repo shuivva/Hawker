@@ -67,7 +67,7 @@ export default function FeaturesPage() {
           title="Platform Capabilities"
           subtitle="Nine core modules powering street vendor licensing"
           icon={FiStar}
-          className="mb-3"
+          className="mb-3 mt-4"
         />
         <div className="row g-4">
           {features.map((item) => (
@@ -87,7 +87,7 @@ export default function FeaturesPage() {
             subtitle="Learn each module through short guided walkthroughs"
             icon={FiPlayCircle}
           />
-          <div className="row g-3">
+          <div className="row g-3 mt-4">
             {features.map((item, idx) => (
               <div className="col-lg-4 col-md-6" key={`${item.title}-video`}>
                 <div className="video-item">

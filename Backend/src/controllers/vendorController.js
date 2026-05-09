@@ -157,6 +157,6 @@ async function getDashboard(req, res, next) {
 module.exports = {
   upsertProfile,
   uploadDocuments,
-  uploadProfilePicture,
+  uploadProfilePicture, 
   getDashboard,
 };
