@@ -184,7 +184,7 @@ export default function VendorDashboardPage() {
               </div>
               <div className="col-lg-4">
                 <div className="p-4">
-                  {renewalInfo?.daysLeft !== null && renewalInfo.daysLeft <= 30 && (
+                  {renewalInfo && renewalInfo.daysLeft !== null && renewalInfo.daysLeft <= 30 && (
                     <div className="alert alert-warning border-0 rounded-3 shadow-sm">
                       <div className="d-flex align-items-center mb-2">
                         <FiClock className="me-2" />
@@ -225,12 +225,12 @@ export default function VendorDashboardPage() {
                   <div className="bg-warning bg-opacity-10 p-3 rounded-3">
                     <FiClock className="text-warning fs-4" />
                   </div>
-                  {renewalInfo?.daysLeft !== null && renewalInfo.daysLeft <= 15 && (
+                  {renewalInfo && renewalInfo.daysLeft !== null && renewalInfo.daysLeft <= 15 && (
                     <span className="badge bg-warning text-white">Due Soon</span>
                   )}
                 </div>
                 <h2 className="mb-1">
-                  {renewalInfo?.daysLeft !== null ? `${renewalInfo.daysLeft}` : "--"}
+                  {renewalInfo && renewalInfo.daysLeft !== null ? `${renewalInfo.daysLeft}` : "--"}
                 </h2>
                 <p className="text-muted mb-0">Days until renewal</p>
               </div>

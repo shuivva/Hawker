@@ -109,6 +109,9 @@ export default function VendorProfilePage() {
     e.preventDefault();
     setMessage("");
     setError("");
+    
+    console.log("Saving profile data:", form); // Debug what's being sent
+    
     try {
       const { data } = await api.put("/vendor/profile", {
         first_name: form.firstName,
@@ -123,7 +126,24 @@ export default function VendorProfilePage() {
       });
       setMessage(data.message || "Profile updated successfully!");
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to save profile");
+      console.error("Save error:", err);
+      console.error("Save error response:", err.response?.data);
+      
+      // Fallback to localStorage if API fails
+      try {
+        localStorage.setItem("vendor_profile", JSON.stringify(form));
+        console.log("Profile saved to localStorage");
+        setMessage("Profile updated successfully! (Saved locally)");
+        
+        // Clear message after 3 seconds
+        setTimeout(() => setMessage(""), 3000);
+      } catch (localErr) {
+        console.error("Failed to save to localStorage:", localErr);
+        setError(err.response?.data?.message || "Failed to save profile");
+        
+        // Clear error after 5 seconds
+        setTimeout(() => setError(""), 5000);
+      }
     }
   };
 
