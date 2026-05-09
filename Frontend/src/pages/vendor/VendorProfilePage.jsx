@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FiUser, FiFileText, FiLock, FiUploadCloud, FiCheckCircle, FiAlertCircle, FiCamera, FiX } from "react-icons/fi";
+import { FiUser, FiFileText, FiLock, FiUploadCloud, FiCheckCircle, FiAlertCircle, FiCamera, FiEdit2, FiX } from "react-icons/fi";
 import api from "../../api/client";
 import PageTitle from "../../components/common/PageTitle";
 import VendorLayout from "../../components/layout/VendorLayout";
@@ -25,12 +25,15 @@ export default function VendorProfilePage() {
   const [profilePicture, setProfilePicture] = useState(null);
   const [profilePicturePreview, setProfilePicturePreview] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadProfileData();
   }, []);
 
   const loadProfileData = async () => {
+    setLoading(true);
     try {
       const { data } = await api.get("/vendor/profile");
       if (data.profile) {
@@ -54,11 +57,21 @@ export default function VendorProfilePage() {
       }
     } catch (err) {
       console.error("Failed to load profile:", err);
+      setError("Failed to load profile data");
+    } finally {
+      setLoading(false);
     }
   };
 
   const onChange = (e) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+
+  const handleCancel = () => {
+    setIsEditMode(false);
+    loadProfileData();
+    setMessage("");
+    setError("");
+  };
 
   const onProfilePictureChange = (e) => {
     const file = e.target.files?.[0];
@@ -93,8 +106,10 @@ export default function VendorProfilePage() {
       setMessage(data.message || "Profile picture uploaded successfully!");
       setProfilePicture(null);
       setProfilePicturePreview(data.profile_picture_url);
+      setTimeout(() => setMessage(""), 3000);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to upload profile picture");
+      setTimeout(() => setError(""), 5000);
     } finally {
       setUploading(false);
     }
@@ -110,7 +125,7 @@ export default function VendorProfilePage() {
     setMessage("");
     setError("");
     
-    console.log("Saving profile data:", form); // Debug what's being sent
+    console.log("Saving profile data:", form);
     
     try {
       const { data } = await api.put("/vendor/profile", {
@@ -125,31 +140,41 @@ export default function VendorProfilePage() {
         vending_zone: form.vendingZone,
       });
       setMessage(data.message || "Profile updated successfully!");
+      setIsEditMode(false);
+      setTimeout(() => setMessage(""), 3000);
     } catch (err) {
       console.error("Save error:", err);
       console.error("Save error response:", err.response?.data);
       
-      // Fallback to localStorage if API fails
-      try {
-        localStorage.setItem("vendor_profile", JSON.stringify(form));
-        console.log("Profile saved to localStorage");
-        setMessage("Profile updated successfully! (Saved locally)");
-        
-        // Clear message after 3 seconds
-        setTimeout(() => setMessage(""), 3000);
-      } catch (localErr) {
-        console.error("Failed to save to localStorage:", localErr);
-        setError(err.response?.data?.message || "Failed to save profile");
-        
-        // Clear error after 5 seconds
-        setTimeout(() => setError(""), 5000);
-      }
+      setError(err.response?.data?.message || "Failed to save profile");
+      setTimeout(() => setError(""), 5000);
     }
   };
 
   const profileCompletion = Math.round(
     ((Object.values(form).filter((v) => v).length) / Object.keys(form).length) * 100
   );
+
+  const displayField = (label, value, icon = null) => (
+    <div className="field-display">
+      <small className="text-muted d-block mb-1">{label}</small>
+      <div className="fw-500" style={{ fontSize: '1rem', color: '#333' }}>
+        {value || <span className="text-muted fst-italic">Not provided</span>}
+      </div>
+    </div>
+  );
+
+  if (loading) {
+    return (
+      <VendorLayout>
+        <div className="text-center py-5">
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </VendorLayout>
+    );
+  }
 
   return (
     <VendorLayout>
@@ -186,29 +211,31 @@ export default function VendorProfilePage() {
             }}>
               {!profilePicturePreview && <FiUser />}
             </div>
-            <label style={{
-              position: 'absolute',
-              bottom: '-5px',
-              right: '-5px',
-              background: '#ffbc42',
-              border: '3px solid white',
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              color: '#333'
-            }}>
-              <FiCamera size={16} />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={onProfilePictureChange}
-                style={{ display: 'none' }}
-              />
-            </label>
+            {isEditMode && (
+              <label style={{
+                position: 'absolute',
+                bottom: '-5px',
+                right: '-5px',
+                background: '#ffbc42',
+                border: '3px solid white',
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: '#333'
+              }}>
+                <FiCamera size={16} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={onProfilePictureChange}
+                  style={{ display: 'none' }}
+                />
+              </label>
+            )}
           </div>
           <div className="col">
             <h3 className="mb-1">{form.firstName || 'Your Name'}</h3>
@@ -280,7 +307,8 @@ export default function VendorProfilePage() {
         borderRadius: '16px',
         borderBottom: '1px solid #d5e3f3',
         display: 'flex',
-        gap: '1px'
+        gap: '1px',
+        justifyContent: 'space-between'
       }}>
         {[
           { id: 'personal', label: 'Personal Info', icon: FiUser },
@@ -327,138 +355,203 @@ export default function VendorProfilePage() {
         <div className="card-body p-4">
           {/* Personal Info Tab */}
           {activeTab === 'personal' && (
-            <form onSubmit={onSubmit}>
-              <h5 className="mb-4 text-dark">Personal Information</h5>
-              <div className="row g-3 mb-4">
-                <div className="col-md-6">
-                  <label className="form-label fw-500">First Name *</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="firstName"
-                    value={form.firstName}
-                    onChange={onChange}
-                    placeholder="Enter first name"
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label fw-500">Last Name *</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="lastName"
-                    value={form.lastName}
-                    onChange={onChange}
-                    placeholder="Enter last name"
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label fw-500">Phone Number *</label>
-                  <input
-                    type="tel"
-                    className="form-control"
-                    name="phone"
-                    value={form.phone}
-                    onChange={onChange}
-                    placeholder="+880 1XXXXXXXXX"
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label fw-500">National ID *</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="nationalId"
-                    value={form.nationalId}
-                    onChange={onChange}
-                    placeholder="Enter NID number"
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label fw-500">Date of Birth</label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    name="dateOfBirth"
-                    value={form.dateOfBirth}
-                    onChange={onChange}
-                  />
-                </div>
-                <div className="col-12">
-                  <label className="form-label fw-500">Address *</label>
-                  <textarea
-                    className="form-control"
-                    rows="3"
-                    name="address"
-                    value={form.address}
-                    onChange={onChange}
-                    placeholder="Enter your residential address"
-                  />
-                </div>
-              </div>
-              <div className="d-flex gap-2">
-                <button type="submit" className="btn btn-warning px-4 rounded-pill">
-                  Save Changes
-                </button>
-                <button type="button" className="btn btn-outline-secondary px-4 rounded-pill">
-                  Cancel
-                </button>
-              </div>
-            </form>
+            <>
+              {isEditMode ? (
+                <form onSubmit={onSubmit}>
+                  <h5 className="mb-4 text-dark">Personal Information</h5>
+                  <div className="row g-3 mb-4">
+                    <div className="col-md-6">
+                      <label className="form-label fw-500">First Name *</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="firstName"
+                        value={form.firstName}
+                        onChange={onChange}
+                        placeholder="Enter first name"
+                      />
+                    </div>
+                    <div className="col-md-6">
+                      <label className="form-label fw-500">Last Name *</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="lastName"
+                        value={form.lastName}
+                        onChange={onChange}
+                        placeholder="Enter last name"
+                      />
+                    </div>
+                    <div className="col-md-6">
+                      <label className="form-label fw-500">Phone Number *</label>
+                      <input
+                        type="tel"
+                        className="form-control"
+                        name="phone"
+                        value={form.phone}
+                        onChange={onChange}
+                        placeholder="+880 1XXXXXXXXX"
+                      />
+                    </div>
+                    <div className="col-md-6">
+                      <label className="form-label fw-500">National ID *</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="nationalId"
+                        value={form.nationalId}
+                        onChange={onChange}
+                        placeholder="Enter NID number"
+                      />
+                    </div>
+                    <div className="col-md-6">
+                      <label className="form-label fw-500">Date of Birth</label>
+                      <input
+                        type="date"
+                        className="form-control"
+                        name="dateOfBirth"
+                        value={form.dateOfBirth}
+                        onChange={onChange}
+                      />
+                    </div>
+                    <div className="col-12">
+                      <label className="form-label fw-500">Address *</label>
+                      <textarea
+                        className="form-control"
+                        rows="3"
+                        name="address"
+                        value={form.address}
+                        onChange={onChange}
+                        placeholder="Enter your residential address"
+                      />
+                    </div>
+                  </div>
+                  <div className="d-flex gap-2">
+                    <button type="submit" className="btn btn-warning px-4 rounded-pill">
+                      Save Changes
+                    </button>
+                    <button type="button" className="btn btn-outline-secondary px-4 rounded-pill" onClick={handleCancel}>
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <>
+                  <div className="d-flex justify-content-between align-items-center mb-4">
+                    <h5 className="text-dark mb-0">Personal Information</h5>
+                    <button 
+                      className="btn btn-outline-primary btn-sm rounded-pill"
+                      onClick={() => setIsEditMode(true)}
+                    >
+                      <FiEdit2 size={16} className="me-2" />
+                      Edit
+                    </button>
+                  </div>
+                  <div className="row g-4">
+                    <div className="col-md-6">
+                      {displayField("First Name", form.firstName)}
+                    </div>
+                    <div className="col-md-6">
+                      {displayField("Last Name", form.lastName)}
+                    </div>
+                    <div className="col-md-6">
+                      {displayField("Phone Number", form.phone)}
+                    </div>
+                    <div className="col-md-6">
+                      {displayField("National ID", form.nationalId)}
+                    </div>
+                    <div className="col-md-6">
+                      {displayField("Date of Birth", form.dateOfBirth)}
+                    </div>
+                    <div className="col-12">
+                      {displayField("Address", form.address)}
+                    </div>
+                  </div>
+                </>
+              )}
+            </>
           )}
 
           {/* Business Info Tab */}
           {activeTab === 'business' && (
-            <form onSubmit={onSubmit}>
-              <h5 className="mb-4 text-dark">Business Information</h5>
-              <div className="row g-3 mb-4">
-                <div className="col-md-6">
-                  <label className="form-label fw-500">Business Name *</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="businessName"
-                    value={form.businessName}
-                    onChange={onChange}
-                    placeholder="Enter business name"
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label fw-500">Business Type *</label>
-                  <select
-                    className="form-control"
-                    name="businessType"
-                    value={form.businessType}
-                    onChange={onChange}
-                  >
-                    <option value="">Select business type</option>
-                    <option value="food">Food & Beverages</option>
-                    <option value="retail">Retail & Goods</option>
-                    <option value="service">Services</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label fw-500">Vending Zone *</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="vendingZone"
-                    value={form.vendingZone}
-                    onChange={onChange}
-                    placeholder="Enter assigned zone"
-                  />
-                </div>
-              </div>
-              <div className="d-flex gap-2">
-                <button type="submit" className="btn btn-warning px-4 rounded-pill">
-                  Save Changes
-                </button>
-                <button type="button" className="btn btn-outline-secondary px-4 rounded-pill">
-                  Cancel
-                </button>
-              </div>
-            </form>
+            <>
+              {isEditMode ? (
+                <form onSubmit={onSubmit}>
+                  <h5 className="mb-4 text-dark">Business Information</h5>
+                  <div className="row g-3 mb-4">
+                    <div className="col-md-6">
+                      <label className="form-label fw-500">Business Name *</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="businessName"
+                        value={form.businessName}
+                        onChange={onChange}
+                        placeholder="Enter business name"
+                      />
+                    </div>
+                    <div className="col-md-6">
+                      <label className="form-label fw-500">Business Type *</label>
+                      <select
+                        className="form-control"
+                        name="businessType"
+                        value={form.businessType}
+                        onChange={onChange}
+                      >
+                        <option value="">Select business type</option>
+                        <option value="food">Food & Beverages</option>
+                        <option value="retail">Retail & Goods</option>
+                        <option value="service">Services</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                    <div className="col-md-6">
+                      <label className="form-label fw-500">Vending Zone *</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="vendingZone"
+                        value={form.vendingZone}
+                        onChange={onChange}
+                        placeholder="Enter assigned zone"
+                      />
+                    </div>
+                  </div>
+                  <div className="d-flex gap-2">
+                    <button type="submit" className="btn btn-warning px-4 rounded-pill">
+                      Save Changes
+                    </button>
+                    <button type="button" className="btn btn-outline-secondary px-4 rounded-pill" onClick={handleCancel}>
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <>
+                  <div className="d-flex justify-content-between align-items-center mb-4">
+                    <h5 className="text-dark mb-0">Business Information</h5>
+                    <button 
+                      className="btn btn-outline-primary btn-sm rounded-pill"
+                      onClick={() => setIsEditMode(true)}
+                    >
+                      <FiEdit2 size={16} className="me-2" />
+                      Edit
+                    </button>
+                  </div>
+                  <div className="row g-4">
+                    <div className="col-md-6">
+                      {displayField("Business Name", form.businessName)}
+                    </div>
+                    <div className="col-md-6">
+                      {displayField("Business Type", form.businessType)}
+                    </div>
+                    <div className="col-md-6">
+                      {displayField("Vending Zone", form.vendingZone)}
+                    </div>
+                  </div>
+                </>
+              )}
+            </>
           )}
 
           {/* Documents Tab */}

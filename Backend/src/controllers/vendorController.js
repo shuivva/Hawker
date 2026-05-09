@@ -4,33 +4,32 @@ const ApiError = require("../utils/apiError");
 async function upsertProfile(req, res, next) {
   try {
     const {
-      firstName,
-      lastName,
+      first_name,
+      last_name,
       phone,
-      nationalId,
-      dateOfBirth,
+      national_id,
+      date_of_birth,
       address,
-      businessName,
-      businessType,
-      vendingZone,
+      business_name,
+      business_type,
+      vending_zone,
     } = req.body;
 
     const userId = req.user.id;
 
-    const payload = [
-      firstName || null,
-      lastName || null,
-      phone || null,
-      nationalId || null,
-      dateOfBirth || null,
-      address || null,
-      businessName || null,
-      businessType || null,
-      vendingZone || null,
-      userId,
-    ];
+    console.log(`[PROFILE_SAVE] User ${userId} saving profile:`, {
+      first_name,
+      last_name,
+      phone,
+      national_id,
+      date_of_birth,
+      address,
+      business_name,
+      business_type,
+      vending_zone,
+    });
 
-    await pool.query(
+    const result = await pool.query(
       `INSERT INTO vendor_profiles (
         user_id, first_name, last_name, phone, national_id, date_of_birth,
         address, business_name, business_type, vending_zone
@@ -46,11 +45,25 @@ async function upsertProfile(req, res, next) {
         business_type = VALUES(business_type),
         vending_zone = VALUES(vending_zone),
         updated_at = CURRENT_TIMESTAMP`,
-      [userId, ...payload.slice(0, 9)],
+      [
+        userId,
+        first_name || null,
+        last_name || null,
+        phone || null,
+        national_id || null,
+        date_of_birth || null,
+        address || null,
+        business_name || null,
+        business_type || null,
+        vending_zone || null,
+      ],
     );
+
+    console.log(`[PROFILE_SAVE] User ${userId} profile saved successfully. Rows affected: ${result[0]?.affectedRows || 0}`);
 
     res.json({ message: "Vendor profile updated successfully" });
   } catch (err) {
+    console.error(`[PROFILE_SAVE_ERROR] User ${req.user?.id} failed to save profile:`, err.message);
     next(err);
   }
 }
@@ -125,7 +138,7 @@ async function getDashboard(req, res, next) {
     const userId = req.user.id;
 
     const [[profile]] = await pool.query(
-      `SELECT first_name, last_name, phone, national_id, date_of_birth, address, business_name, business_type, vending_zone
+      `SELECT first_name, last_name, phone, national_id, date_of_birth, address, business_name, business_type, vending_zone, profile_picture_url
        FROM vendor_profiles WHERE user_id = ?`,
       [userId],
     );

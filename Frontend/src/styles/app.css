@@ -711,6 +711,11 @@ h6,
   place-items: center;
 }
 
+.dashboard-map-shell .leaflet-container {
+  height: 280px;
+  width: 100%;
+}
+
 .dashboard-map-placeholder {
   display: grid;
   place-items: center;
