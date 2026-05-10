@@ -30,6 +30,7 @@ const upload = multer({
 router.use(requireAuth, requireRole("vendor"));
 
 router.get("/dashboard", vendorController.getDashboard);
+router.get("/profile", vendorController.getProfile);
 router.put("/profile", vendorController.upsertProfile);
 router.post(
   "/documents",

@@ -92,6 +92,22 @@ async function uploadDocuments(req, res, next) {
   }
 }
 
+async function getProfile(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const [[profile]] = await pool.query(
+      `SELECT first_name, last_name, phone, national_id AS nationalId, date_of_birth AS dateOfBirth,
+        address, business_name AS businessName, business_type AS businessType, vending_zone AS vendingZone
+       FROM vendor_profiles WHERE user_id = ?`,
+      [userId],
+    );
+
+    res.json({ profile: profile || {} });
+  } catch (err) {
+    next(err);
+  }
+}
+
 async function getDashboard(req, res, next) {
   try {
     const userId = req.user.id;
@@ -129,5 +145,6 @@ async function getDashboard(req, res, next) {
 module.exports = {
   upsertProfile,
   uploadDocuments,
+  getProfile,
   getDashboard,
 };

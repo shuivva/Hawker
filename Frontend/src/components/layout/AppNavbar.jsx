@@ -3,6 +3,7 @@ import { HiOutlineHome, HiOutlineInformationCircle } from "react-icons/hi2";
 import {
   FiGrid,
   FiMapPin,
+  FiBell,
   FiHelpCircle,
   FiLogIn,
   FiUserPlus,
@@ -11,7 +12,6 @@ import {
   FiFileText,
 } from "react-icons/fi";
 import { useAuth } from "../../context/AuthContext";
-import VendorSidebar from "./VendorSidebar";
 
 export default function AppNavbar() {
   const { isAuthenticated, user, logout } = useAuth();
@@ -121,11 +121,6 @@ export default function AppNavbar() {
                   <NavLink className="nav-link" to="/vendor/documents">
                     <FiFileText />
                     Documents
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink className="nav-link" to="/vendor/apply">
-                    Apply License
                   </NavLink>
                 </li>
               </>

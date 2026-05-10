@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { Link, useEffect, useState } from "react";
 import { FiUser } from "react-icons/fi";
 import api from "../../api/client";
+import LoadingState from "../../components/common/LoadingState";
 import PageTitle from "../../components/common/PageTitle";
 import VendorLayout from "../../components/layout/VendorLayout";
 
@@ -20,6 +21,22 @@ export default function VendorProfilePage() {
   const [form, setForm] = useState(initialForm);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const { data } = await api.get("/vendor/profile");
+        setForm((prev) => ({ ...prev, ...data.profile }));
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to load profile");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadProfile();
+  }, []);
 
   const onChange = (e) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -44,12 +61,15 @@ export default function VendorProfilePage() {
         icon={FiUser}
         className="mb-4"
       />
-      <div className="card border-0 shadow-sm app-surface-card">
-        <div className="card-body p-4">
-          {message && <div className="alert alert-success">{message}</div>}
-          {error && <div className="alert alert-danger">{error}</div>}
+      {loading ? (
+        <LoadingState label="Loading profile..." />
+      ) : (
+        <div className="card border-0 shadow-sm app-surface-card">
+          <div className="card-body p-4">
+            {message && <div className="alert alert-success">{message}</div>}
+            {error && <div className="alert alert-danger">{error}</div>}
 
-          <form onSubmit={onSubmit} className="row g-3">
+            <form onSubmit={onSubmit} className="row g-3">
             <div className="col-md-6">
               <label className="form-label">First Name</label>
               <input
@@ -138,9 +158,15 @@ export default function VendorProfilePage() {
                 Save Profile
               </button>
             </div>
+            <div className="col-12">
+              <Link className="btn btn-outline-primary mt-3 rounded-pill" to="/vendor/inspection-history">
+                View Inspection History
+              </Link>
+            </div>
           </form>
         </div>
       </div>
+      )}
     </VendorLayout>
   );
 }

@@ -15,6 +15,9 @@ import VendorProfilePage from "./pages/vendor/VendorProfilePage";
 import VendorDocumentsPage from "./pages/vendor/VendorDocumentsPage";
 import VendorApplyPage from "./pages/vendor/VendorApplyPage";
 import VendorApplicationsPage from "./pages/vendor/VendorApplicationsPage";
+import VendorNotificationsPage from "./pages/vendor/VendorNotificationsPage";
+import VendorInspectionHistoryPage from "./pages/vendor/VendorInspectionHistoryPage";
+import WomenSupportPage from "./pages/vendor/WomenSupportPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminApplicationsPage from "./pages/admin/AdminApplicationsPage";
 import AdminVendorsPage from "./pages/admin/AdminVendorsPage";
@@ -74,6 +77,30 @@ export default function App() {
           element={
             <ProtectedRoute roles={["vendor"]}>
               <VendorApplicationsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/vendor/notifications"
+          element={
+            <ProtectedRoute roles={["vendor"]}>
+              <VendorNotificationsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/vendor/inspection-history"
+          element={
+            <ProtectedRoute roles={["vendor"]}>
+              <VendorInspectionHistoryPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/vendor/women-support"
+          element={
+            <ProtectedRoute roles={["vendor"]}>
+              <WomenSupportPage />
             </ProtectedRoute>
           }
         />

@@ -109,7 +109,7 @@ export default function VendorDashboardPage() {
 
   const reminders = [];
   if (renewalInfo?.daysLeft !== null && renewalInfo?.daysLeft <= 30 && licenseStatus === "Active") {
-    reminders.push(`License renewal due in ${renewalInfo.daysLeft} days.`);
+    reminders.push(`License renewal due in ${renewalInfo?.daysLeft} days.`);
   }
   if (profileCompletion < 100) {
     reminders.push("Complete your profile to speed up approvals.");
@@ -184,16 +184,16 @@ export default function VendorDashboardPage() {
               </div>
               <div className="col-lg-4">
                 <div className="p-4">
-                  {renewalInfo?.daysLeft !== null && renewalInfo.daysLeft <= 30 && (
+                  {renewalInfo?.daysLeft !== null && renewalInfo?.daysLeft <= 30 && (
                     <div className="alert alert-warning border-0 rounded-3 shadow-sm">
                       <div className="d-flex align-items-center mb-2">
                         <FiClock className="me-2" />
                         <strong>License Renewal</strong>
                       </div>
                       <div className="small">
-                        Due in {renewalInfo.daysLeft} days ({renewalInfo.label})
+                        Due in {renewalInfo?.daysLeft} days ({renewalInfo?.label})
                       </div>
-                      {renewalInfo.daysLeft <= 15 && (
+                      {renewalInfo?.daysLeft !== null && renewalInfo?.daysLeft <= 15 && (
                         <Link className="btn btn-sm btn-warning mt-2 w-100" to="/vendor/applications">
                           Renew Now
                         </Link>
@@ -225,12 +225,12 @@ export default function VendorDashboardPage() {
                   <div className="bg-warning bg-opacity-10 p-3 rounded-3">
                     <FiClock className="text-warning fs-4" />
                   </div>
-                  {renewalInfo?.daysLeft !== null && renewalInfo.daysLeft <= 15 && (
+                  {renewalInfo?.daysLeft !== null && renewalInfo?.daysLeft <= 15 && (
                     <span className="badge bg-warning text-white">Due Soon</span>
                   )}
                 </div>
                 <h2 className="mb-1">
-                  {renewalInfo?.daysLeft !== null ? `${renewalInfo.daysLeft}` : "--"}
+                  {renewalInfo?.daysLeft !== null ? `${renewalInfo?.daysLeft}` : "--"}
                 </h2>
                 <p className="text-muted mb-0">Days until renewal</p>
               </div>
@@ -294,7 +294,7 @@ export default function VendorDashboardPage() {
                       </Link>
                     </div>
                     <div className="col-6">
-                      <Link className="dashboard-action-card" to="/faq">
+                      <Link className="dashboard-action-card" to="/vendor/complaints">
                         <strong>File Complaint</strong>
                         <span>Report issue</span>
                       </Link>
