@@ -8,7 +8,7 @@ const { notFoundHandler, errorHandler } = require("./middleware/errorHandler");
 
 const app = express();
 
-const allowedOrigins = [clientUrl, "http://localhost:5174"];
+const allowedOrigins = [clientUrl, "http://localhost:5173"];
 app.use(
   cors({
     origin: (origin, callback) => {

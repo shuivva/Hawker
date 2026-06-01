@@ -277,11 +277,96 @@ async function getUserApplications(req, res, next) {
   }
 }
 
+// Get vendor's approved license
+async function getMyLicense(req, res, next) {
+  try {
+    const userId = req.user.id;
+
+    // Get vendor profile
+    const [[profile]] = await pool.query(
+      `SELECT id, first_name, last_name, phone, business_name, profile_picture_url
+       FROM vendor_profiles WHERE user_id = ?`,
+      [userId]
+    );
+
+    if (!profile) {
+      throw new ApiError(404, "Vendor profile not found");
+    }
+
+    // Get approved license application
+    const [[application]] = await pool.query(
+      `SELECT la.id, la.application_ref, la.license_number, la.tracking_number, 
+              la.desired_zone, la.business_category, la.status, 
+              la.submitted_at, la.reviewed_at, la.issued_at, la.expires_at,
+              la.qr_code_data, la.goods_authorized, la.license_category,
+              lt.name as license_type_name, lt.duration_days,
+              pz.id as zone_id, pz.name as zone_name, pz.zone_code, pz.location as zone_location
+       FROM license_applications la
+       LEFT JOIN license_types lt ON la.license_type_id = lt.id
+       LEFT JOIN vending_zones pz ON la.primary_zone_id = pz.id
+       WHERE la.user_id = ? AND la.status = 'approved'
+       ORDER BY la.reviewed_at DESC
+       LIMIT 1`,
+      [userId]
+    );
+
+    if (!application) {
+      throw new ApiError(404, "No approved license found");
+    }
+
+    res.json({
+      profile,
+      license: application
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// Report license as lost or damaged
+async function reportLostLicense(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const { applicationId } = req.params;
+    const { reason, message } = req.body;
+
+    if (!reason) {
+      throw new ApiError(400, "Reason is required");
+    }
+
+    // Verify the license belongs to the user
+    const [[application]] = await pool.query(
+      "SELECT id FROM license_applications WHERE id = ? AND user_id = ? AND status = 'approved'",
+      [applicationId, userId]
+    );
+
+    if (!application) {
+      throw new ApiError(404, "License not found or not approved");
+    }
+
+    // Create a complaint/report record (using application_audit_logs or create a new report table)
+    await pool.query(
+      `INSERT INTO application_audit_logs 
+       (application_id, action_by, action_type, comments)
+       VALUES (?, ?, ?, ?)`,
+      [applicationId, userId, `REPORT_LICENSE_${reason.toUpperCase()}`, message || ""]
+    );
+
+    res.json({
+      message: `License reported as ${reason}. Admin will be notified shortly.`
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getLicenseTypes,
   getVendingZones,
   createApplication,
   updateApplicationStep,
   getApplication,
-  getUserApplications
+  getUserApplications,
+  getMyLicense,
+  reportLostLicense
 };

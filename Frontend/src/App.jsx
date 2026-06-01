@@ -16,6 +16,7 @@ import VendorDocumentsPage from "./pages/vendor/VendorDocumentsPage";
 import VendorApplyPage from "./pages/vendor/VendorApplyPage";
 import VendorApplicationsPage from "./pages/vendor/VendorApplicationsPage";
 import TrackLicenseApplicationPage from "./pages/vendor/TrackLicenseApplicationPage";
+import VendorMyLicensePage from "./pages/vendor/VendorMyLicensePage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminApplicationsPage from "./pages/admin/AdminApplicationsPage";
 import AdminVendorsPage from "./pages/admin/AdminVendorsPage";
@@ -87,6 +88,14 @@ export default function App() {
           element={
             <ProtectedRoute roles={["vendor"]}>
               <TrackLicenseApplicationPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/vendor/my-license"
+          element={
+            <ProtectedRoute roles={["vendor"]}>
+              <VendorMyLicensePage />
             </ProtectedRoute>
           }
         />

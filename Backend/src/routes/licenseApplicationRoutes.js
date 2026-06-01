@@ -6,7 +6,9 @@ const {
   createApplication,
   updateApplicationStep,
   getApplication,
-  getUserApplications
+  getUserApplications,
+  getMyLicense,
+  reportLostLicense
 } = require("../controllers/licenseApplicationController");
 const { requireAuth } = require("../middleware/auth");
 
@@ -22,5 +24,11 @@ router.post("/applications", createApplication);
 router.get("/applications", getUserApplications);
 router.get("/applications/:applicationId", getApplication);
 router.put("/applications/:applicationId/steps/:step", updateApplicationStep);
+
+// Get vendor's approved license (My License page)
+router.get("/my-license", getMyLicense);
+
+// Report lost or damaged license
+router.post("/report-lost/:applicationId", reportLostLicense);
 
 module.exports = router;
