@@ -9,6 +9,7 @@ import {
   FiChevronRight,
 } from "react-icons/fi";
 import PageTitle from "../components/common/PageTitle";
+import "../styles/pages/FaqPage.css";
 
 const faqs = [
   {
@@ -114,7 +115,11 @@ export default function FaqPage() {
             subtitle="Filter by category and quickly find answers"
             icon={FiHelpCircle}
           />
+<<<<<<< HEAD
           <div className="faq-categories mb-4">
+=======
+          <div className="d-flex flex-wrap gap-2 mb-3 mt-4">
+>>>>>>> 1a9f377ddf8816911ee9d86cda18c9b23185fb89
             {categories.map((cat) => (
               <button
                 key={cat}
@@ -141,13 +146,13 @@ export default function FaqPage() {
           </div>
         </div>
 
-        <div className="panel-box mt-4">
+        <div className="panel-box gap-2 mb-3 mt-4">
           <PageTitle
             title="Video Tutorials"
             subtitle="Bite-sized walkthroughs for common workflows"
             icon={FiPlayCircle}
           />
-          <div className="row g-3">
+          <div className="row g-3 mt-4">
             {[
               { title: "How to Register", duration: "3 mins" },
               { title: "Apply for License", duration: "5 mins" },
@@ -172,7 +177,7 @@ export default function FaqPage() {
           </div>
         </div>
 
-        <div className="panel-box mt-4 live-help-wrap">
+        <div className="panel-box mt-4 live-help-wrap gap-2 mb-3">
           <PageTitle
             title="Still Need Help?"
             subtitle="Our support team is here to assist you"
@@ -216,13 +221,13 @@ export default function FaqPage() {
           </div>
         </div>
 
-        <div className="panel-box mt-4">
+        <div className="panel-box mt-4 gap-2 mb-3">
           <PageTitle
             title="Download Resources"
             subtitle="Guides, checklists, and templates for vendors"
             icon={FiDownload}
           />
-          <div className="row g-2">
+          <div className="row g-2 mt-4">
             {[
               "User Manual (PDF)",
               "Application Checklist",

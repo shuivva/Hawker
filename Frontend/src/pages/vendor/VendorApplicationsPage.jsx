@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FiList, FiPlus } from "react-icons/fi";
+import { FiList, FiPlus, FiEye } from "react-icons/fi";
 import api from "../../api/client";
 import LoadingState from "../../components/common/LoadingState";
 import PageTitle from "../../components/common/PageTitle";
 import { useAuth } from "../../context/AuthContext";
 import VendorLayout from "../../components/layout/VendorLayout";
+import "../../styles/pages/vendor/VendorApplicationsPage.css";
 
 export default function VendorApplicationsPage() {
   const { user } = useAuth();
@@ -16,8 +17,8 @@ export default function VendorApplicationsPage() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await api.get("/vendor/applications");
-        setApplications(res.data);
+        const res = await api.get("/vendor/dashboard");
+        setApplications(res.data.applications || []);
       } catch (err) {
         setError(err.response?.data?.message || "Failed to load applications");
       } finally {
@@ -49,6 +50,7 @@ export default function VendorApplicationsPage() {
                   <th>Stall Type</th>
                   <th>Status</th>
                   <th>Remarks</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -59,11 +61,20 @@ export default function VendorApplicationsPage() {
                     <td>{app.stall_type}</td>
                     <td className="text-capitalize">{app.status}</td>
                     <td>{app.admin_remarks || "-"}</td>
+                    <td>
+                      <Link
+                        to={`/vendor/track/${app.id}`}
+                        className="btn btn-sm btn-outline-primary"
+                      >
+                        <FiEye className="me-1" />
+                        Track
+                      </Link>
+                    </td>
                   </tr>
                 ))}
                 {applications.length === 0 && (
                   <tr>
-                    <td colSpan="5" className="text-center text-muted py-4">
+                    <td colSpan="6" className="text-center text-muted py-4">
                       No applications found
                     </td>
                   </tr>

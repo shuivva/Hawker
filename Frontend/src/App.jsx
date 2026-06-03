@@ -15,12 +15,22 @@ import VendorProfilePage from "./pages/vendor/VendorProfilePage";
 import VendorDocumentsPage from "./pages/vendor/VendorDocumentsPage";
 import VendorApplyPage from "./pages/vendor/VendorApplyPage";
 import VendorApplicationsPage from "./pages/vendor/VendorApplicationsPage";
+import VendorComplaintsPage from "./pages/vendor/VendorComplaintsPage";
+import VendorComplaintTrackingPage from "./pages/vendor/VendorComplaintTrackingPage";
 import VendorNotificationsPage from "./pages/vendor/VendorNotificationsPage";
-import VendorInspectionHistoryPage from "./pages/vendor/VendorInspectionHistoryPage";
-import WomenSupportPage from "./pages/vendor/WomenSupportPage";
+import TrackLicenseApplicationPage from "./pages/vendor/TrackLicenseApplicationPage";
+import VendorRenewLicensePage from "./pages/vendor/VendorRenewLicensePage";
+import VendorRenewalSuccessPage from "./pages/vendor/VendorRenewalSuccessPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminApplicationsPage from "./pages/admin/AdminApplicationsPage";
 import AdminVendorsPage from "./pages/admin/AdminVendorsPage";
+import AdminReportsPage from "./pages/admin/AdminReportsPage";
+import AdminNotificationsPage from "./pages/admin/AdminNotificationsPage";
+import AdminComplaintsPage from "./pages/admin/AdminComplaintsPage";
+import AdminPaymentsPage from "./pages/admin/AdminPaymentsPage";
+import AdminInspectionsPage from "./pages/admin/AdminInspectionsPage";
+import AdminZonesPage from "./pages/admin/AdminZonesPage";
+import AdminZoneCreatePage from "./pages/admin/AdminZoneCreatePage";
 
 export default function App() {
   return (
@@ -68,10 +78,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/vendor/apply-test"
-          element={<VendorApplyPage />}
-        />
+        <Route path="/vendor/apply-test" element={<VendorApplyPage />} />
         <Route
           path="/vendor/applications"
           element={
@@ -81,6 +88,15 @@ export default function App() {
           }
         />
         <Route
+          path="/vendor/renew-license"
+          element={
+            <ProtectedRoute roles={["vendor"]}>
+              <VendorRenewLicensePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/vendor/notifications"
           element={
             <ProtectedRoute roles={["vendor"]}>
@@ -88,19 +104,37 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
-          path="/vendor/inspection-history"
+          path="/vendor/renew-license/success"
           element={
             <ProtectedRoute roles={["vendor"]}>
-              <VendorInspectionHistoryPage />
+              <VendorRenewalSuccessPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/complaints"
+          element={
+            <ProtectedRoute roles={["vendor"]}>
+              <VendorComplaintsPage />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/vendor/women-support"
+          path="/vendor/complaint-tracking"
           element={
             <ProtectedRoute roles={["vendor"]}>
-              <WomenSupportPage />
+              <VendorComplaintTrackingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/vendor/track/:applicationId"
+          element={
+            <ProtectedRoute roles={["vendor"]}>
+              <TrackLicenseApplicationPage />
             </ProtectedRoute>
           }
         />
@@ -126,6 +160,62 @@ export default function App() {
           element={
             <ProtectedRoute roles={["admin"]}>
               <AdminVendorsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/analytics"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminReportsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/notifications"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminNotificationsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/complaints"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminComplaintsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/payments"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminPaymentsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/inspections"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminInspectionsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/zones-management"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminZonesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/zones-management/new"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminZoneCreatePage />
             </ProtectedRoute>
           }
         />
