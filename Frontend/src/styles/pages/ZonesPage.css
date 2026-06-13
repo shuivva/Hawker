@@ -19,3 +19,9 @@
   transform: translateY(-3px);
   box-shadow: 0 10px 20px rgba(15, 61, 130, 0.1);
 }
+
+.f-color{
+  color: #000000;
+  text-shadow: 2px 2px 8px #808080;
+  font-weight: 600;
+}

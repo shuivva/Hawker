@@ -76,8 +76,8 @@ export default function FaqPage() {
     <main className="public-page">
       <section className="public-hero compact">
         <div className="container py-5 text-center">
-          <h1>Help Center & FAQs</h1>
-          <p>Find answers to your questions and get the support you need.</p>
+          <h1 className="f-color">Help Center & FAQs</h1>
+          <p className="f-color">Find answers to your questions and get the support you need.</p>
           <div className="faq-search mx-auto mt-3">
             <input
               className="form-control"

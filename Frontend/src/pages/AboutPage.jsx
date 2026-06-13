@@ -65,7 +65,7 @@ export default function AboutPage() {
           <span className="hero-pill">
             <FiLayers /> About The System
           </span>
-          <h1 className="display-5 mb-3">
+          <h1 className="display-5 mb-3 about-hero-title">
             Digital governance for urban vending
           </h1>
           <p className="lead mb-0 about-hero-text">

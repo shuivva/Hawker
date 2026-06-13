@@ -55,8 +55,8 @@ export default function FeaturesPage() {
     <main className="public-page">
       <section className="public-hero compact">
         <div className="container py-5 text-center">
-          <h1>Comprehensive Features</h1>
-          <p>
+          <h1 className="f-color">Comprehensive Features</h1>
+          <p className="f-color">
             Everything you need for efficient vendor licensing and city
             management.
           </p>

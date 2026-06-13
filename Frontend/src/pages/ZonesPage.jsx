@@ -127,8 +127,8 @@ export default function ZonesPage() {
     <main className="public-page">
       <section className="public-hero compact">
         <div className="container py-5 text-center">
-          <h1>Vending Zones</h1>
-          <p>Explore available vending locations across the city.</p>
+          <h1 className="f-color">Vending Zones</h1>
+          <p className="f-color">Explore available vending locations across the city.</p>
         </div>
       </section>
 

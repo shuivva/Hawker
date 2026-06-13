@@ -39,3 +39,9 @@
   place-items: center;
   font-size: 1.8rem;
 }
+
+.f-color{
+  color: #000000;
+  text-shadow: 2px 2px 8px #808080;
+  font-weight: 600;
+}

@@ -506,7 +506,7 @@ body {
 
 .landing-hero,
 .public-hero {
-  background: var(--gradient-hero);
+  /* background: var(--gradient-hero); */
   color: var(--text-on-primary);
 }
 
